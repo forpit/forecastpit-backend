@@ -1,0 +1,33 @@
+{
+  "name": "prediarena-backend",
+  "version": "1.0.0",
+  "description": "Backend scripts for Prediarena - AI Prediction Market Arena",
+  "type": "module",
+  "scripts": {
+    "sync-markets": "tsx scripts/sync-markets.ts",
+    "take-snapshots": "tsx scripts/take-snapshots.ts",
+    "start-season": "tsx scripts/start-season.ts",
+    "run-decisions": "tsx scripts/run-decisions.ts",
+    "check-resolutions": "tsx scripts/check-resolutions.ts",
+    "typecheck": "tsc --noEmit",
+    "dry-run": "tsx scripts/dry-run-decision.ts",
+    "reset-soft": "tsx scripts/reset-season.ts --soft",
+    "reset-hard": "tsx scripts/reset-season.ts --hard --keep-markets",
+    "serve-opinions": "tsx scripts/serve-opinions.ts",
+    "backfill-prices": "tsx scripts/backfill-price-history.ts",
+    "cleanup-markets": "tsx scripts/cleanup-markets.ts",
+    "fix-event-slugs": "tsx scripts/fix-event-slugs.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.78.0",
+    "dotenv": "^17.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.16.5",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
