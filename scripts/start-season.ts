@@ -82,6 +82,7 @@ async function ensureModel(model: typeof MODELS[number]): Promise<string> {
   const { data, error } = await supabase
     .from('models')
     .insert({
+      id: model.id,
       openrouter_id: model.openrouterId,
       display_name: model.displayName,
       provider: model.provider,

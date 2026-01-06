@@ -255,7 +255,7 @@ async function processAgentDecision(
     result.cost_usd = totalCost;
     result.action = parsed.action;
 
-    // Record decision
+    // Record decision (without prompts - those go to separate secure table)
     const { data: decision, error: decisionError } = await supabase
       .from('decisions')
       .insert({
@@ -263,9 +263,6 @@ async function processAgentDecision(
         season_id: agent.season_id,
         decision_day: decisionDay,
         decision_timestamp: new Date().toISOString(),
-        prompt_system: systemPrompt,
-        prompt_user: userPrompt,
-        raw_response: lastRawResponse,
         parsed_response: parsed,
         retry_count: retryCount,
         action: parsed.action,
@@ -281,6 +278,22 @@ async function processAgentDecision(
 
     if (decisionError) {
       console.error(`  Failed to record decision: ${decisionError.message}`);
+    }
+
+    // Store prompts in secure separate table (only service_role can read)
+    if (decision) {
+      const { error: promptError } = await supabase
+        .from('decision_prompts')
+        .insert({
+          decision_id: decision.id,
+          prompt_system: systemPrompt,
+          prompt_user: userPrompt,
+          raw_response: lastRawResponse
+        });
+
+      if (promptError) {
+        console.error(`  Failed to store prompts: ${promptError.message}`);
+      }
     }
 
     // Execute trades
@@ -347,14 +360,12 @@ async function processAgentDecision(
     result.error = error instanceof Error ? error.message : String(error);
     console.error(`  Error: ${result.error}`);
 
-    // Record failed decision
+    // Record failed decision (no prompts needed for errors)
     await supabase.from('decisions').insert({
       agent_id: agent.id,
       season_id: agent.season_id,
       decision_day: decisionDay,
       decision_timestamp: new Date().toISOString(),
-      prompt_system: '',
-      prompt_user: '',
       action: 'ERROR',
       error_message: result.error,
       retry_count: 0
