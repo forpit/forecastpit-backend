@@ -73,4 +73,4 @@ cp .env.example .env
 
 ## Related
 
-- Frontend: [prediarena-app](https://github.com/mikeheir/prediarena-app)
+- Frontend: [forecastpit-app](https://github.com/forpit/forecastpit-app)
